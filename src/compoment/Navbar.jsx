@@ -1,42 +1,63 @@
-import React from 'react'
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
-  
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check for logged-in user
+    const loggedUser = localStorage.getItem('user');
+    if (loggedUser) {
+      setUser(JSON.parse(loggedUser));
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    setUser(null);
+    navigate('/');
+  };
 
   return (
-    
-     
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">EVENT</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">event</a>
-        </li>
-       
+    <nav className="navbar navbar-expand-lg navbar-light bg-light">
+      <div className="container-fluid">
+        <button 
+          className="navbar-brand btn btn-link text-decoration-none" 
+          onClick={() => navigate('/')}
+        >
+          MyApp
+        </button>
         
-      </ul>
-      <form class="d-flex">
-      <Link to="/signup">
-              <button className="btn btn-outline-success" type="button">
-                Sign Up
+
+        <div className="d-flex">
+          {user ? (
+            <>
+              <span className="navbar-text me-3">Welcome, {user.name}</span>
+              <button className="btn btn-outline-danger" onClick={handleLogout}>
+                Logout
               </button>
-            </Link>
-      </form>
-    </div>
-  </div>
-</nav>
-  )
-}
-
-
+            </>
+          ) : (
+            <>
+              <button 
+                className="btn btn-outline-primary me-2" 
+                onClick={() => navigate('/login')}
+              >
+                Login
+              </button>
+              <button 
+                className="btn btn-outline-success" 
+                onClick={() => navigate('/signup')}
+              >
+                Signup
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    </nav>
+  );
+};
 
 export default Navbar;
